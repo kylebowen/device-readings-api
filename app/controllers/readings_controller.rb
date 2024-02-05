@@ -17,7 +17,14 @@ class ReadingsController < ApplicationController
   end
 
   def set_readings
-    @readings = params.permit(readings: [:timestamp, :count]).require(:readings)
-    @readings = @readings.map(&:to_h).map(&:symbolize_keys)
+    @readings = params.permit(readings: [:timestamp, :count])
+      .require(:readings)
+      .map { |reading|
+        reading.to_h.symbolize_keys
+      }.filter { |reading|
+        reading.dig(:count) && reading.dig(:timestamp)
+      }.map { |reading|
+        Reading.new(**reading)
+      }
   end
 end

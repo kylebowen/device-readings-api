@@ -19,11 +19,17 @@ RSpec.describe "POST /readings" do
   it "adds the device & readings to the datastore" do
     post "/readings", params: params, headers: headers
 
-    expect(persisted_device).to match(
+    expect(persisted_device).to have_attributes(
       cumulative_count: 17,
       latest_timestamp: reading2[:timestamp],
-      readings: a_collection_containing_exactly(reading1, reading2),
-      timestamps: a_collection_containing_exactly(reading1[:timestamp], reading2[:timestamp])
+      readings: a_collection_containing_exactly(
+        an_object_having_attributes(reading1),
+        an_object_having_attributes(reading2),
+      ),
+      timestamps: a_collection_containing_exactly(
+        reading1[:timestamp],
+        reading2[:timestamp],
+      )
     )
   end
 end

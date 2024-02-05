@@ -2,35 +2,22 @@
 
 class Datastore
   def initialize
+    @mutex = Mutex.new
     @devices = {}
     @devices.default_proc = proc do |hash, key|
-      hash[key] = {
-        cumulative_count: 0,
-        latest_timestamp: "",
-        timestamps: [],
-        readings: [],
-      }
+      hash[key] = Device.new
     end
   end
 
   def get(uuid)
-    @devices[uuid]
+    @mutex.synchronize do
+      @devices[uuid]
+    end
   end
 
   def set(uuid, readings)
-    device = get(uuid)
-    readings.each do |reading|
-      # ignore readings for duplicate timestamps
-      next if device[:timestamps].include?(reading[:timestamp])
-
-      reading[:count] = reading[:count].to_i
-
-      device[:timestamps] << reading[:timestamp]
-      device[:readings] << reading
-      device[:cumulative_count] += reading[:count]
-      device[:latest_timestamp] = [device[:latest_timestamp], reading[:timestamp]].max
+    @mutex.synchronize do
+      @devices[uuid].add_readings(readings)
     end
-
-    @devices[uuid] = device
   end
 end

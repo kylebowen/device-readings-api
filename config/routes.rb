@@ -11,7 +11,7 @@ Rails.application.routes.draw do
   defaults format: :json do
     resources :readings, only: :create
 
-    get "/devices/:device_uuid/timestamps/latest", to: "timestamps#latest"
-    get "/devices/:device_uuid/counts/cumulative", to: "counts#cumulative"
+    get "/devices/:device_uuid/latest_timestamp", to: "devices#latest_timestamp"
+    get "/devices/:device_uuid/cumulative_count", to: "devices#cumulative_count"
   end
 end
