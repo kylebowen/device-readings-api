@@ -12,5 +12,6 @@ Rails.application.routes.draw do
     resources :readings, only: :create
 
     get "/devices/:device_uuid/timestamps/latest", to: "timestamps#latest"
+    get "/devices/:device_uuid/counts/cumulative", to: "counts#cumulative"
   end
 end
