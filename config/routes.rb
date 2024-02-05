@@ -7,5 +7,10 @@ Rails.application.routes.draw do
 
   # Defines the root path route ("/")
   # root "posts#index"
-  resources :readings, only: :create
+
+  defaults format: :json do
+    resources :readings, only: :create
+
+    get "/devices/:device_uuid/timestamps/latest", to: "timestamps#latest"
+  end
 end
